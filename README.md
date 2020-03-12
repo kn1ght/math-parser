@@ -43,7 +43,7 @@ const mathExprParser = new MathExprParser({
 const mathExpr = 'pow(2, 3) * (max([c.test1], 2) + pow(min(3, 5), [c.test2]))';
 mathExprParser.parse(mathExpr); // parses expression
 const tokens = mathExprParser.getTokens(); // get tokens (lexems) - this can be used for debugging purposes
-const rpn = mathExprParser.getRPN(); // gets RPN presentation of math expression
+const rpn = mathExprParser.getRPN(); // gets RPN presentation of math expression: 2 3 pow c.test1 2 max 3 5 min c.test2 pow + *
 const ast = mathExprParser.getAST(); // gets AST presentation of math expression
 const calculatedExpr = mathExprParser.evaluate(); // evaluates math expression
 const errors = mathExprParser.getErrors(); // get array of erros
