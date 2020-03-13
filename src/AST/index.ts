@@ -1,4 +1,4 @@
-import { Token } from '../MathExprTokenizer/index';
+import { Token } from '../MathExprTokenizer/Token';
 
 export class AST {
   token: Token;

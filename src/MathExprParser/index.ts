@@ -1,9 +1,6 @@
-import {
-  Token,
-  TokenType,
-  MathExprTokenizer,
-} from '../MathExprTokenizer/index';
+import { MathExprTokenizer } from '../MathExprTokenizer/index';
 import { AST } from '../AST/index';
+import { Token, TokenType } from '../MathExprTokenizer/Token';
 
 type TDParameterMap = { [dParameterName: string]: number };
 type TNameToFunctionMap = {

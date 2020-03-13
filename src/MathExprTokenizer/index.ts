@@ -1,38 +1,12 @@
-export enum TokenType {
-  Number = 'number',
-  DParameter = 'dParameter',
-  FunctionSeparator = 'functionSeparator',
-  Function = 'function',
-  LeftParenthesis = 'leftParenthesis',
-  RightParenthesis = 'rightParenthesis',
-  Operator = 'operator',
-}
-
-const precedenceByOperator: { [key: string]: number } = {
-  '+': 1,
-  '-': 1,
-  '*': 2,
-  '/': 2,
-};
-
-export class Token {
-  type: TokenType;
-  value: string;
-
-  constructor(type: TokenType, value: string) {
-    this.type = type;
-    this.value = value;
-  }
-
-  getPrecedence = (): number => precedenceByOperator[this.value];
-}
+import { MathExprHelper } from '../MathExprHelper/index';
+import { Token, TokenType } from './Token';
 
 // MathExprTokenizer divides string into array of separate tokens (lexems)
 export class MathExprTokenizer {
   private tokens: Token[] = [];
 
   tokenize = (str: string): MathExprTokenizer => {
-    this.tokens = [];
+    this.clearMemory();
 
     let digitsBuffer: string = '';
     let lettersBuffer: string = '';
@@ -49,31 +23,31 @@ export class MathExprTokenizer {
     this.prepareString(str)
       .split('')
       .forEach(ch => {
-        if (isDParameterMode && !this.isRightBracket(ch)) {
+        if (isDParameterMode && !MathExprHelper.isRightBracket(ch)) {
           dParameterBuffer += ch;
-        } else if (this.isLeftBracket(ch)) {
+        } else if (MathExprHelper.isLeftBracket(ch)) {
           isDParameterMode = true;
-        } else if (this.isRightBracket(ch)) {
+        } else if (MathExprHelper.isRightBracket(ch)) {
           this.addToken(TokenType.DParameter, dParameterBuffer);
           dParameterBuffer = '';
           isDParameterMode = false;
-        } else if (this.isLetter(ch)) {
+        } else if (MathExprHelper.isLetter(ch)) {
           lettersBuffer += ch;
-        } else if (this.isDigit(ch) || this.isDot(ch)) {
+        } else if (MathExprHelper.isDigit(ch) || MathExprHelper.isDot(ch)) {
           digitsBuffer += ch;
-        } else if (this.isComma(ch)) {
+        } else if (MathExprHelper.isComma(ch)) {
           addNumberTokenAndClearDigitsBufferIfPossible();
           this.addToken(TokenType.FunctionSeparator, ch);
-        } else if (this.isLeftParenthesis(ch)) {
+        } else if (MathExprHelper.isLeftParenthesis(ch)) {
           if (lettersBuffer) {
             this.addToken(TokenType.Function, lettersBuffer);
             lettersBuffer = '';
           }
           this.addToken(TokenType.LeftParenthesis, ch);
-        } else if (this.isRightParenthesis(ch)) {
+        } else if (MathExprHelper.isRightParenthesis(ch)) {
           addNumberTokenAndClearDigitsBufferIfPossible();
           this.addToken(TokenType.RightParenthesis, ch);
-        } else if (this.isOperator(ch)) {
+        } else if (MathExprHelper.isOperator(ch)) {
           addNumberTokenAndClearDigitsBufferIfPossible();
           this.addToken(TokenType.Operator, ch);
         }
@@ -92,27 +66,15 @@ export class MathExprTokenizer {
   };
 
   private prepareString = (str: string): string => {
-    str = this.deleteSpaces(str);
-    str = this.replaceUnaryMinus(str);
+    str = MathExprHelper.deleteSpaces(str);
+    str = MathExprHelper.replaceUnaryMinus(str);
     if (str[0] === '-') {
       str = '0' + str;
     }
     return str;
   };
 
-  private deleteSpaces = (str: string): string => str.replace(/\s/g, '');
-
-  private replaceUnaryMinus = (str: string): string =>
-    str.replace('(-', '(0-').replace(',-', ',0-');
-
-  private isDigit = (ch: string): boolean => /\d/.test(ch);
-  private isLetter = (ch: string): boolean =>
-    ch.toLowerCase() !== ch.toUpperCase();
-  private isOperator = (ch: string): boolean => /\+|-|\*|\/|\^/.test(ch);
-  private isLeftParenthesis = (ch: string): boolean => ch === '(';
-  private isRightParenthesis = (ch: string): boolean => ch === ')';
-  private isLeftBracket = (ch: string): boolean => ch === '[';
-  private isRightBracket = (ch: string): boolean => ch === ']';
-  private isComma = (ch: string): boolean => ch === ',';
-  private isDot = (ch: string): boolean => ch === '.';
+  private clearMemory = (): void => {
+    this.tokens = [];
+  };
 }

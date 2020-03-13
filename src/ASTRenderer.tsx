@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { AST } from './AST/index';
-import { TokenType } from './MathExprTokenizer/index';
 import { Colored } from './Colored';
+import { TokenType } from './MathExprTokenizer/Token';
 
 interface IASTRendererProps {
   ast: AST;

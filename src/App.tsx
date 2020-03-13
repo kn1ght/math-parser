@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { ASTRenderer } from './ASTRenderer';
 import { MathExprParser } from './MathExprParser/index';
+import { MathExprValidator } from './MathExprValidator/index';
 
 const nameToFunctionMap = {
   max: Math.max,
@@ -15,19 +16,23 @@ const nameToArgumentsQuantityMap = {
 };
 
 const dParameterMap = {
-  'c.test1': 1,
-  'c.test2': 2,
+  dp1: 1,
+  dp2: 2,
 };
 
 export const App = () => {
   const [mathExpr, setMathExpr] = React.useState<string>(
-    'pow(2, 3) * (max([c.test1], 2) + pow(min(3, 5), [c.test2]))',
+    'pow(2, 3) * (max([dp1], 2) + pow(min(3, 5), [dp2]))',
   );
 
   const handleSetMathExpr = React.useCallback(
     e => setMathExpr(e.target.value),
     [],
   );
+
+  const mathExprValidator = new MathExprValidator();
+  const isValid = mathExprValidator.validate(mathExpr);
+  console.log('validator', isValid, mathExprValidator.getErrors());
 
   const mathExprParser = new MathExprParser({
     dParameterMap,
@@ -83,7 +88,7 @@ export const App = () => {
             <td>{rpn}</td>
           </tr>
           <tr>
-            <td>AST:</td>
+            <td>AST (rendered as HTML):</td>
             <td>
               <ASTRenderer ast={ast} />
             </td>
