@@ -6,6 +6,7 @@ Parses math expressions using shunting yard algorithm
 - supports any custom functions (should provide map for function arguments quantity and map for functions)
 - supports unary minuses
 - supports dynamic variables (should provide map for their values)
+- supports parenthesis `(2 + 2) * 3`
 
 ### Math-parser can:
 
