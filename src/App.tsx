@@ -97,6 +97,16 @@ export const App = () => {
             <td>Calculated expr:</td>
             <td>{String(calculatedExpr)}</td>
           </tr>
+          {errors && !!errors.length && (
+            <tr>
+              <td>Errors:</td>
+              <td>
+                {errors.map(e => (
+                  <div>{e}</div>
+                ))}
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
     </div>
