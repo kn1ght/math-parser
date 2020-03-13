@@ -10,8 +10,8 @@ export class MathExprTokenizer {
 
     let digitsBuffer: string = '';
     let lettersBuffer: string = '';
-    let dParameterBuffer: string = '';
-    let isDParameterMode: boolean = false;
+    let variableBuffer: string = '';
+    let isVariableMode: boolean = false;
 
     const addNumberTokenAndClearDigitsBufferIfPossible = (): void => {
       if (digitsBuffer) {
@@ -23,14 +23,14 @@ export class MathExprTokenizer {
     this.prepareString(str)
       .split('')
       .forEach(ch => {
-        if (isDParameterMode && !MathExprHelper.isRightBracket(ch)) {
-          dParameterBuffer += ch;
+        if (isVariableMode && !MathExprHelper.isRightBracket(ch)) {
+          variableBuffer += ch;
         } else if (MathExprHelper.isLeftBracket(ch)) {
-          isDParameterMode = true;
+          isVariableMode = true;
         } else if (MathExprHelper.isRightBracket(ch)) {
-          this.addToken(TokenType.DParameter, dParameterBuffer);
-          dParameterBuffer = '';
-          isDParameterMode = false;
+          this.addToken(TokenType.Variable, variableBuffer);
+          variableBuffer = '';
+          isVariableMode = false;
         } else if (MathExprHelper.isLetter(ch)) {
           lettersBuffer += ch;
         } else if (MathExprHelper.isDigit(ch) || MathExprHelper.isDot(ch)) {

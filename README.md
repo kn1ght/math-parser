@@ -5,7 +5,7 @@ Parses math expressions using shunting yard algorithm
 - works with basic math operators (+, -, \*, /)
 - supports any custom functions (should provide map for function arguments quantity and map for functions)
 - supports unary minuses
-- supports dynamic parameters (should provide map for their values)
+- supports dynamic variables (should provide map for their values)
 
 ### Math-parser can:
 
@@ -28,22 +28,22 @@ const nameToArgumentsQuantityMap = {
   max: 2,
 };
 
-const dParameterMap = {
-  'c.test1': 1,
-  'c.test2': 2,
+const variablesMap = {
+  x: 1,
+  y: 2,
 };
 
-// provide maps for functions and dynamic parameters
+// provide maps for functions and dynamic variables
 const mathExprParser = new MathExprParser({
   nameToFunctionMap,
   nameToArgumentsQuantityMap,
-  dParameterMap,
+  variablesMap,
 });
 
-const mathExpr = 'pow(2, 3) * (max([c.test1], 2) + pow(min(3, 5), [c.test2]))';
+const mathExpr = 'pow(2, 3) * (max([x], 2) + pow(min(3, 5), [y]))';
 mathExprParser.parse(mathExpr); // parses expression
 const tokens = mathExprParser.getTokens(); // get tokens (lexems) - this can be used for debugging purposes
-const rpn = mathExprParser.getRPN(); // gets RPN presentation of math expression: 2 3 pow c.test1 2 max 3 5 min c.test2 pow + *
+const rpn = mathExprParser.getRPN(); // gets RPN presentation of math expression: 2 3 pow x 2 max 3 5 min y pow + *
 const ast = mathExprParser.getAST(); // gets AST presentation of math expression
 const calculatedExpr = mathExprParser.evaluate(); // evaluates math expression
 const errors = mathExprParser.getErrors(); // get array of erros
@@ -52,7 +52,7 @@ const errors = mathExprParser.getErrors(); // get array of erros
 ## TODO:
 
 1. Дописать валидатор
-2. Сделать динамические параметры более гибкими (убрать зависимость от квадратных скобок)
-3. Написать тесты
-4. Оформить как npm пакет
-5. Поддержка динамического количества параметров у функций?
+   ~~2. Сделать динамические параметры более гибкими (убрать зависимость от квадратных скобок)~~
+2. Написать тесты
+3. Оформить как npm пакет
+4. Поддержка динамического количества параметров у функций?

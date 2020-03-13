@@ -23,7 +23,7 @@ export const ASTRenderer = ({
 
   if (type === TokenType.Number) {
     return +value === 0 ? null : <>{value}</>;
-  } else if (type === TokenType.DParameter) {
+  } else if (type === TokenType.Variable) {
     return <Colored color="green">[{value}]</Colored>;
   } else if (type === TokenType.Operator) {
     resultNode = (

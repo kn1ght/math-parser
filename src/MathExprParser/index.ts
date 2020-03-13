@@ -2,21 +2,24 @@ import { MathExprTokenizer } from '../MathExprTokenizer/index';
 import { AST } from '../AST/index';
 import { Token, TokenType } from '../MathExprTokenizer/Token';
 import { MathExprValidator } from '../MathExprValidator/index';
+import { MathExprHelper } from '../MathExprHelper/index';
 
-type TDParameterMap = { [dParameterName: string]: number };
+type TVariableMap = { [variableName: string]: number };
 type TNameToFunctionMap = {
   [functionName: string]: (...args: number[]) => number;
 };
 type TNameToArgumentsQuantityMap = { [functionName: string]: number };
+export type TVariableMarks = [string, string];
 
-interface IParseMaps {
-  dParameterMap?: TDParameterMap;
+interface IMathExprParserProps {
+  variablesMap?: TVariableMap;
   nameToFunctionMap?: TNameToFunctionMap;
   nameToArgumentsQuantityMap?: TNameToArgumentsQuantityMap;
+  variableMarks?: TVariableMarks;
 }
 
 export class MathExprParser {
-  private dParameterMap: TDParameterMap = {};
+  private variablesMap: TVariableMap = {};
   private nameToFunctionMap: TNameToFunctionMap = {};
   private nameToArgumentsQuantityMap: TNameToArgumentsQuantityMap = {};
   // Validator is used to validate input math expressions
@@ -31,19 +34,26 @@ export class MathExprParser {
   // Operators stack (contains operators & functions)
   private operatorsStack: Token[] = [];
 
+  // Opening and closing marks are used to find variables in math expression
+  private variableMarks: TVariableMarks;
+
   constructor({
     nameToFunctionMap = {},
     nameToArgumentsQuantityMap = {},
-    dParameterMap = {},
-  }: IParseMaps) {
+    variablesMap = {},
+    variableMarks = ['[', ']'],
+  }: IMathExprParserProps) {
     this.nameToFunctionMap = nameToFunctionMap;
     this.nameToArgumentsQuantityMap = nameToArgumentsQuantityMap;
-    this.dParameterMap = dParameterMap;
+    this.variablesMap = variablesMap;
+    this.variableMarks = variableMarks;
   }
 
   // Parses math string to RPN using shunting yard algorithm
   parse = (str: string): MathExprParser => {
     this.clearMemory();
+
+    str = MathExprHelper.replaceVariableMarks(str, this.variableMarks);
 
     // const isValid = this.validator.validate(str);
 
@@ -57,7 +67,7 @@ export class MathExprParser {
     tokens.forEach(token => {
       const { type } = token;
 
-      if (type === TokenType.Number || type === TokenType.DParameter) {
+      if (type === TokenType.Number || type === TokenType.Variable) {
         this.outputQueue.push(token);
       } else if (type === TokenType.Function) {
         this.operatorsStack.push(token);
@@ -124,15 +134,15 @@ export class MathExprParser {
       const { type, value } = token;
       if (type === TokenType.Number) {
         operandsStack.push(+value);
-      } else if (type === TokenType.DParameter) {
-        let dParameterValue = this.dParameterMap[value];
-        if (dParameterValue === undefined) {
+      } else if (type === TokenType.Variable) {
+        let variableValue = this.variablesMap[value];
+        if (variableValue === undefined) {
           this.addError(
-            `DParameter with name "${value}" not found in dParameterMap`,
+            `Variable with name "${value}" not found in TVariableMap`,
           );
-          dParameterValue = NaN;
+          variableValue = NaN;
         }
-        operandsStack.push(+dParameterValue);
+        operandsStack.push(+variableValue);
       } else if (type === TokenType.Operator) {
         const rightOperand = operandsStack.pop();
         const leftOperand = operandsStack.pop();
@@ -184,7 +194,7 @@ export class MathExprParser {
 
     this.outputQueue.forEach(token => {
       const { type, value } = token;
-      if (type === TokenType.Number || type === TokenType.DParameter) {
+      if (type === TokenType.Number || type === TokenType.Variable) {
         astItems.push(new AST(token, []));
       } else if (type === TokenType.Operator) {
         const rightOperand = astItems.pop();

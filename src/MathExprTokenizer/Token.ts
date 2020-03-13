@@ -1,6 +1,6 @@
 export enum TokenType {
   Number = 'number',
-  DParameter = 'dParameter',
+  Variable = 'variable',
   FunctionSeparator = 'functionSeparator',
   Function = 'function',
   LeftParenthesis = 'leftParenthesis',

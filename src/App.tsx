@@ -15,14 +15,15 @@ const nameToArgumentsQuantityMap = {
   pow: 2,
 };
 
-const dParameterMap = {
-  dp1: 1,
-  dp2: 2,
+const variablesMap = {
+  x: 1,
+  y: 2,
+  z: 2,
 };
 
 export const App = () => {
   const [mathExpr, setMathExpr] = React.useState<string>(
-    'pow(2, 3) * (max([dp1], 2) + pow(min(3, 5), [dp2]))',
+    'pow({z}, 3) * (max({x}, 2) + pow(min(3, 5), {y}))',
   );
 
   const handleSetMathExpr = React.useCallback(
@@ -35,9 +36,10 @@ export const App = () => {
   console.log('validator', isValid, mathExprValidator.getErrors());
 
   const mathExprParser = new MathExprParser({
-    dParameterMap,
+    variablesMap,
     nameToArgumentsQuantityMap,
     nameToFunctionMap,
+    variableMarks: ['{', '}'],
   });
 
   mathExprParser.parse(mathExpr);
