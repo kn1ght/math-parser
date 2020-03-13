@@ -7,7 +7,7 @@ type TDParameterMap = { [dParameterName: string]: number };
 type TNameToFunctionMap = {
   [functionName: string]: (...args: number[]) => number;
 };
-type TNameToArgumentsQuantityMap = { [dParameterName: string]: number };
+type TNameToArgumentsQuantityMap = { [functionName: string]: number };
 
 interface IParseMaps {
   dParameterMap?: TDParameterMap;
