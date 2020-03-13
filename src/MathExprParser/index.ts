@@ -41,36 +41,6 @@ export class MathExprParser {
     this.dParameterMap = dParameterMap;
   }
 
-  private getLastOperator = (): Token => this.operatorsStack.slice(-1)[0];
-
-  private getLastOperatorType = (): TokenType => {
-    const lastOperatorInStack = this.operatorsStack.slice(-1)[0];
-    return lastOperatorInStack ? lastOperatorInStack.type : null;
-  };
-
-  private popOperatorToOutputQueue = (): void => {
-    const lastOperatorInStack = this.operatorsStack.pop();
-    this.outputQueue.push(lastOperatorInStack);
-  };
-
-  private operatorsStackIsEmpty = (): boolean =>
-    this.operatorsStack.length === 0;
-
-  private operatorsStackIsNotEmpty = (): boolean =>
-    this.operatorsStack.length !== 0;
-
-  private clearMemory = (): void => {
-    this.outputQueue = [];
-    this.operatorsStack = [];
-    this.errors = [];
-    this.initialTokens = [];
-  };
-
-  private addError = (err: string): void => {
-    this.errors.push(err);
-    console.error(err);
-  };
-
   // Parses math string to RPN using shunting yard algorithm
   parse = (str: string): MathExprParser => {
     this.clearMemory();
@@ -239,4 +209,34 @@ export class MathExprParser {
 
   // Returns initial tokens created by MathExprTokenizer (can be used for debugging)
   getTokens = (): Token[] => this.initialTokens;
+
+  private getLastOperator = (): Token => this.operatorsStack.slice(-1)[0];
+
+  private getLastOperatorType = (): TokenType => {
+    const lastOperatorInStack = this.operatorsStack.slice(-1)[0];
+    return lastOperatorInStack ? lastOperatorInStack.type : null;
+  };
+
+  private popOperatorToOutputQueue = (): void => {
+    const lastOperatorInStack = this.operatorsStack.pop();
+    this.outputQueue.push(lastOperatorInStack);
+  };
+
+  private operatorsStackIsEmpty = (): boolean =>
+    this.operatorsStack.length === 0;
+
+  private operatorsStackIsNotEmpty = (): boolean =>
+    this.operatorsStack.length !== 0;
+
+  private clearMemory = (): void => {
+    this.outputQueue = [];
+    this.operatorsStack = [];
+    this.errors = [];
+    this.initialTokens = [];
+  };
+
+  private addError = (err: string): void => {
+    this.errors.push(err);
+    console.error(err);
+  };
 }

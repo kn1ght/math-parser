@@ -1,17 +1,17 @@
 import * as React from 'react';
-import { MathExprParser } from './MathExprParser/index';
 import { ASTRenderer } from './ASTRenderer';
+import { MathExprParser } from './MathExprParser/index';
 
 const nameToFunctionMap = {
-  pow: Math.pow,
-  min: Math.min,
   max: Math.max,
+  min: Math.min,
+  pow: Math.pow,
 };
 
 const nameToArgumentsQuantityMap = {
-  pow: 2,
-  min: 2,
   max: 2,
+  min: 2,
+  pow: 2,
 };
 
 const dParameterMap = {
@@ -30,9 +30,9 @@ export const App = () => {
   );
 
   const mathExprParser = new MathExprParser({
-    nameToFunctionMap,
-    nameToArgumentsQuantityMap,
     dParameterMap,
+    nameToArgumentsQuantityMap,
+    nameToFunctionMap,
   });
 
   mathExprParser.parse(mathExpr);

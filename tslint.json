@@ -8,7 +8,8 @@
   "jsRules": {},
   "rules": {
     "max-classes-per-file": false,
-    "no-console": false
+    "no-console": false,
+    "member-access": false
   },
   "rulesDirectory": []
 }
