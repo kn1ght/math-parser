@@ -1,6 +1,7 @@
 import { MathExprTokenizer } from '../MathExprTokenizer/index';
 import { AST } from '../AST/index';
 import { Token, TokenType } from '../MathExprTokenizer/Token';
+import { MathExprValidator } from '../MathExprValidator/index';
 
 type TDParameterMap = { [dParameterName: string]: number };
 type TNameToFunctionMap = {
@@ -18,6 +19,8 @@ export class MathExprParser {
   private dParameterMap: TDParameterMap = {};
   private nameToFunctionMap: TNameToFunctionMap = {};
   private nameToArgumentsQuantityMap: TNameToArgumentsQuantityMap = {};
+  // Validator is used to validate input math expressions
+  private validator: MathExprValidator = new MathExprValidator();
   // Tokenizer is used to get tokens (lexems) from initial math string
   private tokenizer: MathExprTokenizer = new MathExprTokenizer();
   private errors: string[] = [];
@@ -41,6 +44,12 @@ export class MathExprParser {
   // Parses math string to RPN using shunting yard algorithm
   parse = (str: string): MathExprParser => {
     this.clearMemory();
+
+    // const isValid = this.validator.validate(str);
+
+    // if (!isValid) {
+    //   return this;
+    // }
 
     const tokens = this.tokenizer.tokenize(str).getTokens();
     this.initialTokens = tokens;

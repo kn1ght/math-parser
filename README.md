@@ -48,3 +48,11 @@ const ast = mathExprParser.getAST(); // gets AST presentation of math expression
 const calculatedExpr = mathExprParser.evaluate(); // evaluates math expression
 const errors = mathExprParser.getErrors(); // get array of erros
 ```
+
+## TODO:
+
+1. Дописать валидатор
+2. Сделать динамические параметры более гибкими (убрать зависимость от квадратных скобок)
+3. Написать тесты
+4. Оформить как npm пакет
+5. Поддержка динамического количества параметров у функций?
