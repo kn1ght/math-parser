@@ -1,6 +1,10 @@
 import { MathExprTokenizer } from '../MathExprTokenizer/index';
 import { AST } from '../AST/index';
-import { Token, TokenType } from '../MathExprTokenizer/Token';
+import {
+  Token,
+  TokenType,
+  AssociativityType,
+} from '../MathExprTokenizer/Token';
 import { MathExprValidator } from '../MathExprValidator/index';
 import { MathExprHelper } from '../MathExprHelper/index';
 
@@ -67,47 +71,64 @@ export class MathExprParser {
     tokens.forEach(token => {
       const { type } = token;
 
-      if (type === TokenType.Number || type === TokenType.Variable) {
-        this.outputQueue.push(token);
-      } else if (type === TokenType.Function) {
-        this.operatorsStack.push(token);
-      } else if (type === TokenType.FunctionSeparator) {
-        while (
-          this.getLastOperatorType() !== TokenType.LeftParenthesis &&
-          this.operatorsStackIsNotEmpty()
-        ) {
-          this.popOperatorToOutputQueue();
+      switch (type) {
+        case TokenType.Number:
+        case TokenType.Variable: {
+          this.outputQueue.push(token);
+          break;
         }
-        if (this.operatorsStack.length === 0) {
-          this.addError(
-            'Math expression has missing comma or opening parenthesis',
-          );
+        case TokenType.LeftParenthesis:
+        case TokenType.Function: {
+          this.operatorsStack.push(token);
+          break;
         }
-      } else if (type === TokenType.Operator) {
-        while (
-          this.getLastOperator() &&
-          this.getLastOperator().getPrecedence() >= token.getPrecedence() &&
-          this.operatorsStackIsNotEmpty()
-        ) {
-          this.popOperatorToOutputQueue();
+        case TokenType.FunctionSeparator: {
+          while (
+            this.getLastOperatorType() !== TokenType.LeftParenthesis &&
+            this.operatorsStackIsNotEmpty()
+          ) {
+            this.popOperatorToOutputQueue();
+          }
+          if (this.operatorsStackIsEmpty()) {
+            this.addError(
+              'Math expression has missing comma or opening parenthesis',
+            );
+          }
+          break;
         }
-        this.operatorsStack.push(token);
-      } else if (type === TokenType.LeftParenthesis) {
-        this.operatorsStack.push(token);
-      } else if (type === TokenType.RightParenthesis) {
-        while (
-          this.getLastOperatorType() !== TokenType.LeftParenthesis &&
-          this.operatorsStackIsNotEmpty()
-        ) {
-          this.popOperatorToOutputQueue();
+        case TokenType.Operator: {
+          while (
+            this.getLastOperator() &&
+            this.operatorsStackIsNotEmpty() &&
+            ((this.getLastOperator().getAssociativity() ===
+              AssociativityType.Left &&
+              this.getLastOperator().getPrecedence() >=
+                token.getPrecedence()) ||
+              (this.getLastOperator().getAssociativity() ===
+                AssociativityType.Right &&
+                this.getLastOperator().getPrecedence() < token.getPrecedence()))
+          ) {
+            this.popOperatorToOutputQueue();
+          }
+          this.operatorsStack.push(token);
+          break;
         }
-        if (this.operatorsStackIsEmpty()) {
-          this.addError('Math expression has missing parenthesises');
-        }
-        // removes LeftParenthesis from operators stack;
-        this.operatorsStack.pop();
-        if (this.getLastOperatorType() === TokenType.Function) {
-          this.popOperatorToOutputQueue();
+        case TokenType.RightParenthesis: {
+          while (
+            this.getLastOperatorType() !== TokenType.LeftParenthesis &&
+            this.operatorsStackIsNotEmpty()
+          ) {
+            this.popOperatorToOutputQueue();
+          }
+          if (this.operatorsStackIsEmpty()) {
+            this.addError('Math expression has missing parenthesises');
+          }
+          // removes LeftParenthesis from operators stack;
+          this.operatorsStack.pop();
+          if (this.getLastOperatorType() === TokenType.Function) {
+            this.popOperatorToOutputQueue();
+          }
+          break;
         }
       }
     });
@@ -132,59 +153,71 @@ export class MathExprParser {
 
     this.outputQueue.forEach(token => {
       const { type, value } = token;
-      if (type === TokenType.Number) {
-        operandsStack.push(+value);
-      } else if (type === TokenType.Variable) {
-        let variableValue = this.variablesMap[value];
-        if (variableValue === undefined) {
-          this.addError(
-            `Variable with name "${value}" not found in TVariableMap`,
-          );
-          variableValue = NaN;
-        }
-        operandsStack.push(+variableValue);
-      } else if (type === TokenType.Operator) {
-        const rightOperand = operandsStack.pop();
-        const leftOperand = operandsStack.pop();
-        let result: number = 0;
 
-        switch (value) {
-          case '+':
-            result = leftOperand + rightOperand;
-            break;
-          case '-':
-            result = leftOperand - rightOperand;
-            break;
-          case '*':
-            result = leftOperand * rightOperand;
-            break;
-          case '/':
-            result = leftOperand / rightOperand;
-            break;
+      switch (type) {
+        case TokenType.Number: {
+          operandsStack.push(+value);
+          break;
         }
+        case TokenType.Variable: {
+          let variableValue = this.variablesMap[value];
+          if (variableValue === undefined) {
+            this.addError(
+              `Variable with name "${value}" not found in TVariableMap`,
+            );
+            variableValue = NaN;
+          }
+          operandsStack.push(+variableValue);
+          break;
+        }
+        case TokenType.Operator: {
+          const rightOperand = operandsStack.pop();
+          const leftOperand = operandsStack.pop();
+          let result: number = 0;
 
-        operandsStack.push(result);
-      } else if (type === TokenType.Function) {
-        const args: number[] = [];
-        const argQuantity = this.nameToArgumentsQuantityMap[value];
-        for (let i = 0; i < argQuantity; i++) {
-          args.push(operandsStack.pop());
+          switch (value) {
+            case '+':
+              result = leftOperand + rightOperand;
+              break;
+            case '-':
+              result = leftOperand - rightOperand;
+              break;
+            case '*':
+              result = leftOperand * rightOperand;
+              break;
+            case '/':
+              result = leftOperand / rightOperand;
+              break;
+            case '^':
+              result = Math.pow(leftOperand, rightOperand);
+              break;
+          }
+
+          operandsStack.push(result);
+          break;
         }
-        const func = this.nameToFunctionMap[value];
-        if (func) {
-          const functionResult = this.nameToFunctionMap[value](
-            ...args.reverse(),
-          );
-          operandsStack.push(functionResult);
-        } else {
-          this.addError(
-            `Function with name "${value}" not found in nameToFunctionMap`,
-          );
-          operandsStack.push(NaN);
+        case TokenType.Function: {
+          const args: number[] = [];
+          const argQuantity = this.nameToArgumentsQuantityMap[value];
+          for (let i = 0; i < argQuantity; i++) {
+            args.push(operandsStack.pop());
+          }
+          const func = this.nameToFunctionMap[value];
+          if (func) {
+            const functionResult = func(...args.reverse());
+            operandsStack.push(functionResult);
+          } else {
+            this.addError(
+              `Function with name "${value}" not found in nameToFunctionMap`,
+            );
+            operandsStack.push(NaN);
+          }
+          break;
         }
       }
     });
 
+    // todo: may be print error
     return operandsStack.pop();
   };
 
@@ -194,25 +227,35 @@ export class MathExprParser {
 
     this.outputQueue.forEach(token => {
       const { type, value } = token;
-      if (type === TokenType.Number || type === TokenType.Variable) {
-        astItems.push(new AST(token, []));
-      } else if (type === TokenType.Operator) {
-        const rightOperand = astItems.pop();
-        const leftOperand = astItems.pop();
-        astItems.push(new AST(token, [leftOperand, rightOperand]));
-      } else if (type === TokenType.Function) {
-        const args: AST[] = [];
-        let argQuantity = this.nameToArgumentsQuantityMap[value];
-        if (argQuantity === undefined) {
-          argQuantity = 0;
-          this.addError(
-            `Function with name "${value}" not found in nameToArgumentsQuantityMap`,
-          );
+
+      switch (type) {
+        case TokenType.Number:
+        case TokenType.Variable: {
+          astItems.push(new AST(token, []));
+          break;
         }
-        for (let i = 0; i < argQuantity; i++) {
-          args.push(astItems.pop());
+        case TokenType.Operator: {
+          const rightOperand = astItems.pop();
+          const leftOperand = astItems.pop();
+          astItems.push(new AST(token, [leftOperand, rightOperand]));
+          break;
         }
-        astItems.push(new AST(token, args.reverse()));
+        case TokenType.Function: {
+          const args: AST[] = [];
+          let argQuantity = this.nameToArgumentsQuantityMap[value];
+          if (argQuantity === undefined) {
+            argQuantity = 0;
+            this.addError(
+              `Function with name "${value}" not found in nameToArgumentsQuantityMap`,
+            );
+          }
+          // TODO: наверное, можно переделать на splice или slice, чтобы обойтись без цикла
+          for (let i = 0; i < argQuantity; i++) {
+            args.push(astItems.pop());
+          }
+          astItems.push(new AST(token, args.reverse()));
+          break;
+        }
       }
     });
 

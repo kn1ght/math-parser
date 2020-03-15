@@ -8,11 +8,25 @@ export enum TokenType {
   Operator = 'operator',
 }
 
+export enum AssociativityType {
+  Left = 'left',
+  Right = 'right',
+}
+
 const precedenceByOperatorMap: { [key: string]: number } = {
   '+': 1,
   '-': 1,
   '*': 2,
   '/': 2,
+  '^': 3,
+};
+
+const associativityByOperatorMap: { [key: string]: AssociativityType } = {
+  '+': AssociativityType.Left,
+  '-': AssociativityType.Left,
+  '*': AssociativityType.Left,
+  '/': AssociativityType.Left,
+  '^': AssociativityType.Right,
 };
 
 export class Token {
@@ -25,4 +39,7 @@ export class Token {
   }
 
   getPrecedence = (): number => precedenceByOperatorMap[this.value];
+
+  getAssociativity = (): AssociativityType =>
+    associativityByOperatorMap[this.value];
 }

@@ -18,14 +18,17 @@ export const ASTRenderer = ({
 
   const { token, operands } = ast;
   const { type, value } = token;
-  const currentPrecedence = token.getPrecedence();
-  let resultNode;
 
   if (type === TokenType.Number) {
     return +value === 0 ? null : <>{value}</>;
   } else if (type === TokenType.Variable) {
     return <Colored color="green">[{value}]</Colored>;
-  } else if (type === TokenType.Operator) {
+  }
+
+  const currentPrecedence = token.getPrecedence();
+  let resultNode;
+
+  if (type === TokenType.Operator) {
     resultNode = (
       <>
         <ASTRenderer ast={operands[0]} parentPrecedence={currentPrecedence} />{' '}
