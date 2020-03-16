@@ -21,6 +21,8 @@ export const ASTRenderer = ({
 
   if (type === TokenType.Number) {
     return +value === 0 ? null : <>{value}</>;
+  } else if (type === TokenType.Date) {
+    return <Colored color="orange">#{value}#</Colored>;
   } else if (type === TokenType.Variable) {
     return <Colored color="green">[{value}]</Colored>;
   }

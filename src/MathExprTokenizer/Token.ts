@@ -6,6 +6,7 @@ export enum TokenType {
   LeftParenthesis = 'leftParenthesis',
   RightParenthesis = 'rightParenthesis',
   Operator = 'operator',
+  Date = 'date',
 }
 
 export enum AssociativityType {

@@ -15,6 +15,7 @@ const errorMessageByErrorCodeMap: { [code: string]: string } = {
   120: 'Function not found in nameToFunctionMap',
   130: 'Variable with name "${value}" not found in TVariableMap',
   140: 'Math expression has missing comma or opening parenthesis',
+  150: 'Date is empty',
 };
 
 abstract class CharInfo {
@@ -68,6 +69,7 @@ export class MathExprValidator {
       if (this.errors.length) break;
 
       const ch = str[index];
+      const prevCh = str[index - 1];
       const isFirstCh = index === 0;
       const isLastCh = index === str.length - 1;
 
@@ -99,6 +101,8 @@ export class MathExprValidator {
         this.addError(ch, index, 80);
       } else if (isLastCh && MathExprHelper.isLetter(ch)) {
         this.addError(ch, index, 90);
+      } else if (MathExprHelper.isSharp(ch) && MathExprHelper.isSharp(prevCh)) {
+        this.addError(ch, index, 150);
       }
     }
 

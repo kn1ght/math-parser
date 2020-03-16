@@ -13,7 +13,7 @@ import { MathExprHelper } from '../MathExprHelper/index';
 
 type TVariableMap = { [variableName: string]: number };
 type TNameToFunctionMap = {
-  [functionName: string]: (...args: number[]) => number;
+  [functionName: string]: (...args: number[] | string[]) => number;
 };
 type TNameToArgumentsQuantityMap = { [functionName: string]: number };
 export type TVariableMarks = [string, string];
@@ -74,6 +74,7 @@ export class MathExprParser {
 
       switch (type) {
         case TokenType.Number:
+        case TokenType.Date:
         case TokenType.Variable: {
           this.outputQueue.push(token);
           break;
@@ -148,7 +149,8 @@ export class MathExprParser {
       const { type, value } = token;
 
       switch (type) {
-        case TokenType.Number: {
+        case TokenType.Number:
+        case TokenType.Date: {
           operandsStack.push(+value);
           break;
         }
@@ -229,6 +231,7 @@ export class MathExprParser {
 
       switch (type) {
         case TokenType.Number:
+        case TokenType.Date:
         case TokenType.Variable: {
           astItems.push(new AST(token, []));
           break;

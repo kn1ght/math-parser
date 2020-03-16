@@ -104,8 +104,8 @@ export const App = () => {
             <tr>
               <td>Errors:</td>
               <td>
-                {errors.map(e => (
-                  <div>{e.message}</div>
+                {errors.map((e, index) => (
+                  <div key={index}>{e.message}</div>
                 ))}
               </td>
             </tr>

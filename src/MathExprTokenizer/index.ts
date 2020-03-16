@@ -12,6 +12,8 @@ export class MathExprTokenizer {
     let lettersBuffer: string = '';
     let variableBuffer: string = '';
     let isVariableMode: boolean = false;
+    let dateBuffer: string = '';
+    let isDateMode: boolean = false;
 
     const addNumberTokenAndClearDigitsBufferIfPossible = (): void => {
       if (digitsBuffer) {
@@ -25,6 +27,16 @@ export class MathExprTokenizer {
       .forEach(ch => {
         if (isVariableMode && !MathExprHelper.isRightBracket(ch)) {
           variableBuffer += ch;
+        } else if (isDateMode) {
+          if (MathExprHelper.isSharp(ch)) {
+            this.addToken(TokenType.Date, dateBuffer);
+            dateBuffer = '';
+            isDateMode = false;
+          } else {
+            dateBuffer += ch;
+          }
+        } else if (MathExprHelper.isSharp(ch)) {
+          isDateMode = true;
         } else if (MathExprHelper.isLeftBracket(ch)) {
           isVariableMode = true;
         } else if (MathExprHelper.isRightBracket(ch)) {

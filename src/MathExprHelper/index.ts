@@ -33,6 +33,11 @@ export class MathExprHelper {
     } else if (openingMark === '' || closingMark === '') {
       throw new Error("Opening and closing marks can't be empty strings");
     } else if (
+      MathExprHelper.isSharp(openingMark) ||
+      MathExprHelper.isSharp(closingMark)
+    ) {
+      throw new Error("Opening and closing marks can't be sharps(#)");
+    } else if (
       MathExprHelper.hasLettersOrDigits(openingMark) ||
       MathExprHelper.hasLettersOrDigits(closingMark)
     ) {
@@ -61,6 +66,7 @@ export class MathExprHelper {
     [')', ']', '}'].includes(ch);
   public static isComma = (ch: string): boolean => ch === ',';
   public static isDot = (ch: string): boolean => ch === '.';
+  public static isSharp = (ch: string): boolean => ch === '#';
   public static isOperator = (
     ch: string,
     operatorsExcludedFromCheck?: string[],
