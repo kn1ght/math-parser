@@ -5,7 +5,10 @@ import {
   TokenType,
   AssociativityType,
 } from '../MathExprTokenizer/Token';
-import { MathExprValidator } from '../MathExprValidator/index';
+import {
+  MathExprValidator,
+  MathExprValidatorError,
+} from '../MathExprValidator/index';
 import { MathExprHelper } from '../MathExprHelper/index';
 
 type TVariableMap = { [variableName: string]: number };
@@ -30,14 +33,12 @@ export class MathExprParser {
   private validator: MathExprValidator = new MathExprValidator();
   // Tokenizer is used to get tokens (lexems) from initial math string
   private tokenizer: MathExprTokenizer = new MathExprTokenizer();
-  private errors: string[] = [];
   // Initial tokens (can be used for debugging)
   private initialTokens: Token[] = [];
   // Output queue (tokens in reverse polish notation - RPN)
   private outputQueue: Token[] = [];
   // Operators stack (contains operators & functions)
   private operatorsStack: Token[] = [];
-
   // Opening and closing marks are used to find variables in math expression
   private variableMarks: TVariableMarks;
 
@@ -59,11 +60,11 @@ export class MathExprParser {
 
     str = MathExprHelper.replaceVariableMarks(str, this.variableMarks);
 
-    // const isValid = this.validator.validate(str);
+    const isValid = this.validator.validate(str);
 
-    // if (!isValid) {
-    //   return this;
-    // }
+    if (!isValid) {
+      return this;
+    }
 
     const tokens = this.tokenizer.tokenize(str).getTokens();
     this.initialTokens = tokens;
@@ -90,9 +91,7 @@ export class MathExprParser {
             this.popOperatorToOutputQueue();
           }
           if (this.operatorsStackIsEmpty()) {
-            this.addError(
-              'Math expression has missing comma or opening parenthesis',
-            );
+            this.validator.addError('', -1, 140);
           }
           break;
         }
@@ -120,9 +119,6 @@ export class MathExprParser {
           ) {
             this.popOperatorToOutputQueue();
           }
-          if (this.operatorsStackIsEmpty()) {
-            this.addError('Math expression has missing parenthesises');
-          }
           // removes LeftParenthesis from operators stack;
           this.operatorsStack.pop();
           if (this.getLastOperatorType() === TokenType.Function) {
@@ -134,16 +130,13 @@ export class MathExprParser {
     });
 
     while (this.operatorsStack.length) {
-      if (this.getLastOperatorType() === TokenType.LeftParenthesis) {
-        this.addError('Math expression has unclosed parenthesis');
-      }
       this.popOperatorToOutputQueue();
     }
 
     return this;
   };
 
-  getErrors = (): string[] => this.errors;
+  getErrors = (): MathExprValidatorError[] => this.validator.getErrors();
 
   // Returns reverse polish notation (RPN) as string
   getRPN = (): string => this.outputQueue.map(i => i.value).join(' ');
@@ -162,7 +155,10 @@ export class MathExprParser {
         case TokenType.Variable: {
           let variableValue = this.variablesMap[value];
           if (variableValue === undefined) {
-            this.addError(
+            this.validator.addError(
+              '',
+              -1,
+              130,
               `Variable with name "${value}" not found in TVariableMap`,
             );
             variableValue = NaN;
@@ -207,7 +203,10 @@ export class MathExprParser {
             const functionResult = func(...args.reverse());
             operandsStack.push(functionResult);
           } else {
-            this.addError(
+            this.validator.addError(
+              '',
+              -1,
+              120,
               `Function with name "${value}" not found in nameToFunctionMap`,
             );
             operandsStack.push(NaN);
@@ -245,7 +244,10 @@ export class MathExprParser {
           let argQuantity = this.nameToArgumentsQuantityMap[value];
           if (argQuantity === undefined) {
             argQuantity = 0;
-            this.addError(
+            this.validator.addError(
+              '',
+              -1,
+              110,
               `Function with name "${value}" not found in nameToArgumentsQuantityMap`,
             );
           }
@@ -261,13 +263,15 @@ export class MathExprParser {
 
     const finalAst = astItems.pop();
     if (astItems.length) {
-      this.addError('Not all astItems used');
+      this.validator.addError('', -1, 100);
     }
     return finalAst;
   };
 
   // Returns initial tokens created by MathExprTokenizer (can be used for debugging)
   getTokens = (): Token[] => this.initialTokens;
+
+  isValid = (): boolean => this.validator.isValid();
 
   private getLastOperator = (): Token => this.operatorsStack.slice(-1)[0];
 
@@ -290,12 +294,7 @@ export class MathExprParser {
   private clearMemory = (): void => {
     this.outputQueue = [];
     this.operatorsStack = [];
-    this.errors = [];
     this.initialTokens = [];
-  };
-
-  private addError = (err: string): void => {
-    this.errors.push(err);
-    console.error(err);
+    this.validator.clearMemory();
   };
 }

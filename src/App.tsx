@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ASTRenderer } from './ASTRenderer';
 import { MathExprParser } from './MathExprParser/index';
-import { MathExprValidator } from './MathExprValidator/index';
+import { ErrorRenderer } from './ErrorRenderer';
 
 const nameToFunctionMap = {
   max: Math.max,
@@ -31,10 +31,6 @@ export const App = () => {
     [],
   );
 
-  const mathExprValidator = new MathExprValidator();
-  const isValid = mathExprValidator.validate(mathExpr);
-  console.log('validator', isValid, mathExprValidator.getErrors());
-
   const mathExprParser = new MathExprParser({
     variablesMap,
     nameToArgumentsQuantityMap,
@@ -48,6 +44,7 @@ export const App = () => {
   const ast = mathExprParser.getAST();
   const calculatedExpr = mathExprParser.evaluate();
   const errors = mathExprParser.getErrors();
+  const isValid = mathExprParser.isValid();
 
   console.log('mathExpr', mathExpr);
   console.log('tokens', tokens);
@@ -92,7 +89,11 @@ export const App = () => {
           <tr>
             <td>AST (rendered as HTML):</td>
             <td>
-              <ASTRenderer ast={ast} />
+              {isValid ? (
+                <ASTRenderer ast={ast} />
+              ) : (
+                <ErrorRenderer errors={errors} initialStr={mathExpr} />
+              )}
             </td>
           </tr>
           <tr>
@@ -104,7 +105,7 @@ export const App = () => {
               <td>Errors:</td>
               <td>
                 {errors.map(e => (
-                  <div>{e}</div>
+                  <div>{e.message}</div>
                 ))}
               </td>
             </tr>

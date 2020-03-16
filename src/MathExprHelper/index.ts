@@ -51,11 +51,26 @@ export class MathExprHelper {
   public static isDigit = (ch: string): boolean => /\d/.test(ch);
   public static isLetter = (ch: string): boolean =>
     ch.toLowerCase() !== ch.toUpperCase();
-  public static isOperator = (ch: string): boolean => /\+|-|\*|\/|\^/.test(ch);
   public static isLeftParenthesis = (ch: string): boolean => ch === '(';
   public static isRightParenthesis = (ch: string): boolean => ch === ')';
   public static isLeftBracket = (ch: string): boolean => ch === '[';
   public static isRightBracket = (ch: string): boolean => ch === ']';
+  public static isOneOfLeftBrackets = (ch: string): boolean =>
+    ['(', '[', '{'].includes(ch);
+  public static isOneOfRightBrackets = (ch: string): boolean =>
+    [')', ']', '}'].includes(ch);
   public static isComma = (ch: string): boolean => ch === ',';
   public static isDot = (ch: string): boolean => ch === '.';
+  public static isOperator = (
+    ch: string,
+    operatorsExcludedFromCheck?: string[],
+  ): boolean => {
+    const operators = ['+', '-', '*', '/', '^'];
+
+    return operatorsExcludedFromCheck
+      ? operators
+          .filter(operator => !operatorsExcludedFromCheck.includes(operator))
+          .includes(ch)
+      : operators.includes(ch);
+  };
 }
