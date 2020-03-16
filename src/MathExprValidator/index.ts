@@ -106,6 +106,11 @@ export class MathExprValidator {
       }
     }
 
+    if (this.bracketInfosStack.length) {
+      const bracket = this.bracketInfosStack.pop();
+      this.addError(bracket.ch, bracket.positionAtString, 10);
+    }
+
     return !this.errors.length;
   };
 

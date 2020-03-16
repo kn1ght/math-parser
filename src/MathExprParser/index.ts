@@ -42,12 +42,14 @@ export class MathExprParser {
   // Opening and closing marks are used to find variables in math expression
   private variableMarks: TVariableMarks;
 
-  constructor({
-    nameToFunctionMap = {},
-    nameToArgumentsQuantityMap = {},
-    variablesMap = {},
-    variableMarks = ['[', ']'],
-  }: IMathExprParserProps) {
+  constructor(props?: IMathExprParserProps) {
+    const {
+      nameToFunctionMap = {},
+      nameToArgumentsQuantityMap = {},
+      variablesMap = {},
+      variableMarks = ['[', ']'],
+    } = props;
+
     this.nameToFunctionMap = nameToFunctionMap;
     this.nameToArgumentsQuantityMap = nameToArgumentsQuantityMap;
     this.variablesMap = variablesMap;
@@ -139,8 +141,8 @@ export class MathExprParser {
 
   getErrors = (): MathExprValidatorError[] => this.validator.getErrors();
 
-  // Returns reverse polish notation (RPN) as string
-  getRPN = (): string => this.outputQueue.map(i => i.value).join(' ');
+  // Returns reverse polish notation (RPN)
+  getRPN = (): Token[] => this.outputQueue;
 
   evaluate = (): number => {
     const operandsStack: number[] = [];
@@ -272,7 +274,7 @@ export class MathExprParser {
   };
 
   // Returns initial tokens created by MathExprTokenizer (can be used for debugging)
-  getTokens = (): Token[] => this.initialTokens;
+  getInitialTokens = (): Token[] => this.initialTokens;
 
   isValid = (): boolean => this.validator.isValid();
 

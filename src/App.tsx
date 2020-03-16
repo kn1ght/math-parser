@@ -18,12 +18,12 @@ const nameToArgumentsQuantityMap = {
 const variablesMap = {
   x: 1,
   y: 2,
-  z: 2,
+  z: 3,
 };
 
 export const App = () => {
   const [mathExpr, setMathExpr] = React.useState<string>(
-    'pow({z}, 3) * (max({x}, 2) + pow(min(3, 5), {y}))',
+    'pow({y}, 3) * (max({x}, 2) + pow(min({z}, 5), {y}))',
   );
 
   const handleSetMathExpr = React.useCallback(
@@ -39,7 +39,7 @@ export const App = () => {
   });
 
   mathExprParser.parse(mathExpr);
-  const tokens = mathExprParser.getTokens();
+  const tokens = mathExprParser.getInitialTokens();
   const rpn = mathExprParser.getRPN();
   const ast = mathExprParser.getAST();
   const calculatedExpr = mathExprParser.evaluate();
@@ -84,7 +84,7 @@ export const App = () => {
           </tr>
           <tr>
             <td>RPN:</td>
-            <td>{rpn}</td>
+            <td>{rpn.map(t => t.value).join(' ')}</td>
           </tr>
           <tr>
             <td>AST (rendered as HTML):</td>
