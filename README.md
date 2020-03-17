@@ -21,21 +21,21 @@ npm i @kn1ght/math-parser
 ```
 
 ```javascript
-// provide maps to function implementations (if you want to use your functions)
+// provide map of function names to function implementations (if you want to use your functions)
 const nameToFunctionMap = {
   pow: Math.pow,
   min: Math.min,
   max: Math.max,
 };
 
-// provide maps to function argument quantity (if you want to use your functions)
+// provide map of functions names to function argument quantity (if you want to use your functions)
 const nameToArgumentsQuantityMap = {
   pow: 2,
   min: 2,
   max: 2,
 };
 
-// provide maps to function argument quantity (if you want to use variables)
+// provide map of vaiable names to their values (if you want to use variables)
 const variablesMap = {
   x: 1,
   y: 2,
@@ -48,9 +48,8 @@ const mathExprParser = new MathExprParser({
   variablesMap,
 });
 
-const mathExpr = 'pow(2, 3) * (max([x], 2) + pow(min(3, 5), [y]))';
 // parses imput string expression
-mathExprParser.parse(mathExpr);
+mathExprParser.parse('pow(2, 3) * (max([x], 2) + pow(min(3, 5), [y]))');
 // get tokens (lexems) - this can be used for debugging purposes
 const tokens = mathExprParser.getTokens();
 // gets RPN presentation of math expression: 2 3 pow x 2 max 3 5 min y pow + *
@@ -59,7 +58,7 @@ const rpn = mathExprParser.getRPN();
 const ast = mathExprParser.getAST();
 // evaluates math expression
 const calculatedExpr = mathExprParser.evaluate();
-// get array of erros
+// get array of errors
 const errors = mathExprParser.getErrors();
 ```
 
