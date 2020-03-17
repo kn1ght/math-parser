@@ -16,25 +16,32 @@ Parses math expressions using shunting yard algorithm
 
 ### Usage example:
 
+```
+npm i @kn1ght/math-parser
+```
+
 ```javascript
+// provide maps to function implementations (if you want to use your functions)
 const nameToFunctionMap = {
   pow: Math.pow,
   min: Math.min,
   max: Math.max,
 };
 
+// provide maps to function argument quantity (if you want to use your functions)
 const nameToArgumentsQuantityMap = {
   pow: 2,
   min: 2,
   max: 2,
 };
 
+// provide maps to function argument quantity (if you want to use variables)
 const variablesMap = {
   x: 1,
   y: 2,
 };
 
-// provide maps for functions and dynamic variables
+// initialize parser by creating an instance of MathExprParser
 const mathExprParser = new MathExprParser({
   nameToFunctionMap,
   nameToArgumentsQuantityMap,
@@ -42,19 +49,20 @@ const mathExprParser = new MathExprParser({
 });
 
 const mathExpr = 'pow(2, 3) * (max([x], 2) + pow(min(3, 5), [y]))';
-mathExprParser.parse(mathExpr); // parses expression
-const tokens = mathExprParser.getTokens(); // get tokens (lexems) - this can be used for debugging purposes
-const rpn = mathExprParser.getRPN(); // gets RPN presentation of math expression: 2 3 pow x 2 max 3 5 min y pow + *
-const ast = mathExprParser.getAST(); // gets AST presentation of math expression
-const calculatedExpr = mathExprParser.evaluate(); // evaluates math expression
-const errors = mathExprParser.getErrors(); // get array of erros
+// parses imput string expression
+mathExprParser.parse(mathExpr);
+// get tokens (lexems) - this can be used for debugging purposes
+const tokens = mathExprParser.getTokens();
+// gets RPN presentation of math expression: 2 3 pow x 2 max 3 5 min y pow + *
+const rpn = mathExprParser.getRPN();
+// gets AST presentation of math expression
+const ast = mathExprParser.getAST();
+// evaluates math expression
+const calculatedExpr = mathExprParser.evaluate();
+// get array of erros
+const errors = mathExprParser.getErrors();
 ```
 
 ## TODO:
 
-~~1. Дописать валидатор~~
-~~2. Сделать динамические параметры более гибкими (убрать зависимость от квадратных скобок)~~
-~~2. Написать тесты~~
-
-3. Оформить как npm пакет
-4. Поддержка динамического количества параметров у функций?
+1. Support dynamic parameters for functions?

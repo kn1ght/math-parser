@@ -13,7 +13,7 @@ const errorMessageByErrorCodeMap: { [code: string]: string } = {
   100: 'Not all astItems used,',
   110: 'Function not found in nameToArgumentsQuantityMap',
   120: 'Function not found in nameToFunctionMap',
-  130: 'Variable with name "${value}" not found in TVariableMap',
+  130: 'Variable not found in TVariableMap',
   140: 'Math expression has missing comma or opening parenthesis',
   150: 'Date is empty',
 };

@@ -1,9 +1,9 @@
 {
   "name": "@kn1ght/math-parser",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Parses math expressions using shunting yard algorithm",
-  "main": "dist/MathExprParser/index.js",
-  "types": "dist/MathExprParser/index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "author": "kn1ght",
   "license": "MIT",
   "keywords": [
