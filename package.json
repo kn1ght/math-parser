@@ -1,5 +1,5 @@
 {
-  "name": "math-parser",
+  "name": "@kn1ght/math-parser",
   "version": "0.0.1",
   "description": "Parses math expressions using shunting yard algorithm",
   "main": "dist/MathExprParser/index.js",
