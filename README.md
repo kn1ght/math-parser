@@ -21,6 +21,8 @@ npm i @kn1ght/math-parser
 ```
 
 ```javascript
+import { MathExprParser } from '@kn1ght/math-parser';
+
 // provide map of function names to function implementations (if you want to use your functions)
 const nameToFunctionMap = {
   pow: Math.pow,
