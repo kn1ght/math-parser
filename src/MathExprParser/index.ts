@@ -42,7 +42,7 @@ export class MathExprParser {
   // Opening and closing marks are used to find variables in math expression
   private variableMarks: TVariableMarks;
 
-  constructor(props?: IMathExprParserProps) {
+  constructor(props: IMathExprParserProps = {}) {
     const {
       nameToFunctionMap = {},
       nameToArgumentsQuantityMap = {},
