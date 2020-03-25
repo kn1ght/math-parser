@@ -67,3 +67,7 @@ const errors = mathExprParser.getErrors();
 ## TODO:
 
 1. Support dynamic parameters for functions?
+2. Unary operators
+3. Bitwise operators
+4. Relational operators
+5. Support of boolean tokens?
