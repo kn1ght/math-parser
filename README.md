@@ -2,7 +2,7 @@
 
 Parses math expressions using shunting yard algorithm
 
-- works with basic math operators (+, -, \*, /, ^)
+- works with basic math operators (+, -, \*, /, %)
 - supports any custom functions (should provide map for function arguments quantity and map for functions)
 - supports unary minuses
 - supports dynamic variables (should provide map for their values)

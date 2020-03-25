@@ -15,19 +15,37 @@ export enum AssociativityType {
 }
 
 const precedenceByOperatorMap: { [key: string]: number } = {
-  '+': 1,
-  '-': 1,
-  '*': 2,
-  '/': 2,
-  '^': 3,
+  '|': 8,
+  '^': 9,
+  '&': 10,
+  '>': 12,
+  '<': 12,
+  '<<': 13,
+  '>>': 13,
+  '>>>': 13,
+  '+': 14,
+  '-': 14,
+  '*': 15,
+  '/': 15,
+  '%': 15,
+  '**': 16,
 };
 
 const associativityByOperatorMap: { [key: string]: AssociativityType } = {
+  '|': AssociativityType.Left,
+  '^': AssociativityType.Left,
+  '&': AssociativityType.Left,
+  '>': AssociativityType.Left,
+  '<': AssociativityType.Left,
+  '<<': AssociativityType.Left,
+  '>>': AssociativityType.Left,
+  '>>>': AssociativityType.Left,
   '+': AssociativityType.Left,
   '-': AssociativityType.Left,
   '*': AssociativityType.Left,
   '/': AssociativityType.Left,
-  '^': AssociativityType.Right,
+  '%': AssociativityType.Left,
+  '**': AssociativityType.Right,
 };
 
 export class Token {

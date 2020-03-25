@@ -188,8 +188,37 @@ export class MathExprParser {
             case '/':
               result = leftOperand / rightOperand;
               break;
-            case '^':
+            case '**':
               result = Math.pow(leftOperand, rightOperand);
+              break;
+            case '%':
+              result = leftOperand % rightOperand;
+              break;
+            case '&':
+              result = leftOperand & rightOperand;
+              break;
+            case '^':
+              result = leftOperand ^ rightOperand;
+              break;
+            case '|':
+              result = leftOperand | rightOperand;
+              break;
+            case '<':
+              // @ts-ignore
+              result = leftOperand < rightOperand;
+              break;
+            case '>':
+              // @ts-ignore
+              result = leftOperand > rightOperand;
+              break;
+            case '<<':
+              result = leftOperand << rightOperand;
+              break;
+            case '>>':
+              result = leftOperand >> rightOperand;
+              break;
+            case '>>>':
+              result = leftOperand >>> rightOperand;
               break;
           }
 

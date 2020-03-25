@@ -29,10 +29,11 @@ describe('MathExprParser', () => {
   });
 
   const mathExpr =
-    'pow({y}, 3) * (max({x}, 2) + pow(min({z}, 5), {y})) + 12.5 + (5 ^ 2)';
+    'pow({y}, 3) * (max({x}, 2) + pow(min({z}, 5), {y})) + 12.5 + (6 / 2)';
+  // 8 * (2 + 9) + 15.5
 
   test('test RPN', () => {
-    const rpn = 'y 3 pow x 2 max z 5 min y pow + * 12.5 + 5 2 ^ +';
+    const rpn = 'y 3 pow x 2 max z 5 min y pow + * 12.5 + 6 2 / +';
 
     expect(
       mathExprParser
@@ -58,6 +59,6 @@ describe('MathExprParser', () => {
   });
 
   test('test evaluate', () => {
-    expect(mathExprParser.parse(mathExpr).evaluate()).toBe(125.5);
+    expect(mathExprParser.parse(mathExpr).evaluate()).toBe(103.5);
   });
 });

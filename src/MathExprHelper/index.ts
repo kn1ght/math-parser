@@ -71,7 +71,20 @@ export class MathExprHelper {
     ch: string,
     operatorsExcludedFromCheck?: string[],
   ): boolean => {
-    const operators = ['+', '-', '*', '/', '^'];
+    const operators = [
+      '+',
+      '-',
+      '*',
+      '/',
+      '^',
+      '%',
+      '&',
+      '^',
+      '|',
+      '<',
+      '>',
+      '=',
+    ];
 
     return operatorsExcludedFromCheck
       ? operators
