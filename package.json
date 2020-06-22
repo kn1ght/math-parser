@@ -1,6 +1,6 @@
 {
   "name": "@kn1ght/math-parser",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Parses math expressions using shunting yard algorithm",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
