@@ -10,7 +10,7 @@ const errorMessageByErrorCodeMap: { [code: string]: string } = {
   70: "Math expression can't start with dot",
   80: "Math expression can't end with dot",
   90: 'Math expression has uncalled function',
-  100: 'Not all astItems used,',
+  100: 'Not all ast items used,',
   110: 'Function not found in nameToArgumentsQuantityMap',
   120: 'Function not found in nameToFunctionMap',
   130: 'Variable not found in TVariableMap',
