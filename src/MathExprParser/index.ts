@@ -195,15 +195,12 @@ export class MathExprParser {
               result = leftOperand % rightOperand;
               break;
             case '&':
-              // @ts-ignore
               result = leftOperand & rightOperand;
               break;
             case '^':
-              // @ts-ignore
               result = leftOperand ^ rightOperand;
               break;
             case '|':
-              // @ts-ignore
               result = leftOperand | rightOperand;
               break;
             case '<':
@@ -215,15 +212,12 @@ export class MathExprParser {
               result = leftOperand > rightOperand;
               break;
             case '<<':
-              // @ts-ignore
               result = leftOperand << rightOperand;
               break;
             case '>>':
-              // @ts-ignore
               result = leftOperand >> rightOperand;
               break;
             case '>>>':
-              // @ts-ignore
               result = leftOperand >>> rightOperand;
               break;
           }
